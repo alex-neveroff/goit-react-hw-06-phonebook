@@ -1,7 +1,13 @@
-import PropTypes from 'prop-types';
 import { SearchForm } from 'components/SearchFilter/SearchFilter.styled';
+import { useDispatch, useSelector } from 'react-redux';
+import { filterReducer } from 'redux/filterSlice';
 
-const SearchFilter = ({ filter, onChange }) => {
+const SearchFilter = () => {
+  const filter = useSelector(state => state.filter.filter);
+  const dispatch = useDispatch();
+  const handleFilter = event => {
+    dispatch(filterReducer(event.currentTarget.value));
+  };
   return (
     <SearchForm htmlFor="filter-field">
       Find contacts by name
@@ -10,15 +16,10 @@ const SearchFilter = ({ filter, onChange }) => {
         id="filter-field"
         type="text"
         value={filter}
-        onChange={onChange}
+        onChange={handleFilter}
       />
     </SearchForm>
   );
-};
-
-SearchFilter.propTypes = {
-  filter: PropTypes.string.isRequired,
-  onChange: PropTypes.func.isRequired,
 };
 
 export default SearchFilter;

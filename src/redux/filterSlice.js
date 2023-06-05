@@ -6,10 +6,10 @@ export const filterSlice = createSlice({
     filter: '',
   },
   reducers: {
-    filterContacts(state, action) {
+    filterReducer(state, action) {
       state.filter = action.payload;
     },
   },
 });
 
-export const { filterContacts } = filterSlice.actions;
+export const { filterReducer } = filterSlice.actions;

@@ -1,7 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addContact, deleteContact } from 'redux/contactSlice';
-import { filterContacts } from 'redux/filterSlice';
+import { addReducer, deleteReducer } from 'redux/contactSlice';
 import { Container } from './App.styled';
 import { Notify } from 'notiflix';
 import ContactForm from 'components/ContactForm';
@@ -26,7 +25,7 @@ const App = () => {
   //   localStorage.setItem('contacts', JSON.stringify(contacts));
   // }, [contacts]);
 
-  const addOneContact = newContact => {
+  const addContact = newContact => {
     const loweredNewContact = newContact.name.toLowerCase();
     const isContactExists = contacts.some(
       contact => contact.name.toLowerCase() === loweredNewContact
@@ -35,18 +34,14 @@ const App = () => {
       Notify.failure(`${newContact.name} is already in phonebook.`);
       return;
     }
-    dispatch(addContact(newContact));
+    dispatch(addReducer(newContact));
     Notify.success(`${newContact.name} added to phonebook successfully!`);
   };
 
-  const deleteOneContact = contactId => {
+  const deleteContact = contactId => {
     const contactName = contacts.find(contact => contact.id === contactId);
-    dispatch(deleteContact(contactId));
+    dispatch(deleteReducer(contactId));
     Notify.warning(`${contactName.name} delete from phonebook.`);
-  };
-
-  const handleFilter = event => {
-    dispatch(filterContacts(event.currentTarget.value));
   };
 
   const filtredContacts = () => {
@@ -62,15 +57,15 @@ const App = () => {
   return (
     <Container>
       <h1 className="title main-title">Phonebook</h1>
-      <ContactForm onSubmit={addOneContact} />
+      <ContactForm onSubmit={addContact} />
       <h2 className="title sub-title">Contacts</h2>
       {contacts.length > 0 ? (
         <>
-          <SearchFilter filter={filter} onChange={handleFilter} />
+          <SearchFilter />
           {filtredContacts().length > 0 ? (
             <ContactList
               contacts={filtredContacts()}
-              onDelete={deleteOneContact}
+              onDelete={deleteContact}
             />
           ) : (
             <Notification message="No matches found" />
