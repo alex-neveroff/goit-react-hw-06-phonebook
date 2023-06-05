@@ -1,32 +1,7 @@
 import PropTypes from 'prop-types';
 import { SearchForm } from 'components/SearchFilter/SearchFilter.styled';
-import { useState, useEffect } from 'react';
 
-const SearchFilter = ({ contacts, onChange }) => {
-  const [filter, setFilter] = useState('');
-  const [filtredContacts, setFiltredContacts] = useState([]);
-
-  const handleFilter = event => {
-    setFilter(event.currentTarget.value);
-  };
-
-  useEffect(() => {
-    const filterContacts = () => {
-      const loweredFilter = filter.toLowerCase();
-      setFiltredContacts(
-        contacts.filter(contact => {
-          return contact.name.toLowerCase().includes(loweredFilter);
-        })
-      );
-    };
-
-    filterContacts();
-  }, [filter, contacts]);
-
-  useEffect(() => {
-    onChange(filtredContacts);
-  }, [filtredContacts, onChange]);
-
+const SearchFilter = ({ filter, onChange }) => {
   return (
     <SearchForm htmlFor="filter-field">
       Find contacts by name
@@ -35,14 +10,14 @@ const SearchFilter = ({ contacts, onChange }) => {
         id="filter-field"
         type="text"
         value={filter}
-        onChange={handleFilter}
+        onChange={onChange}
       />
     </SearchForm>
   );
 };
 
 SearchFilter.propTypes = {
-  contacts: PropTypes.array.isRequired,
+  filter: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
 };
 
