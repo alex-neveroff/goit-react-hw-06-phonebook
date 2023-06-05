@@ -1,4 +1,7 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+import { addContact, deleteContact } from 'redux/contactSlice';
+import { filterContacts } from 'redux/filterSlice';
 import { Container } from './App.styled';
 import { Notify } from 'notiflix';
 import ContactForm from 'components/ContactForm';
@@ -7,24 +10,23 @@ import SearchFilter from 'components/SearchFilter';
 import Notification from 'components/Notification';
 
 const App = () => {
-  const [contacts, setContacts] = useState(
-    JSON.parse(localStorage.getItem('contacts')) ?? []
-  );
-  const [filtredContacts, setFiltredContacts] = useState(null);
+  const contacts = useSelector(state => state.contacts.contacts);
+  const filter = useSelector(state => state.filter.filter);
+  const dispatch = useDispatch();
 
-  useEffect(() => {
-    if (contacts.length === 0) {
-      localStorage.removeItem('contacts');
-      return;
-    }
-    localStorage.setItem('contacts', JSON.stringify(contacts));
-  }, [contacts]);
+  // const [contacts, setContacts] = useState(
+  //   JSON.parse(localStorage.getItem('contacts')) ?? []
+  // );
 
-  const handleFilter = filtredContacts => {
-    setFiltredContacts(filtredContacts);
-  };
+  // useEffect(() => {
+  //   if (contacts.length === 0) {
+  //     localStorage.removeItem('contacts');
+  //     return;
+  //   }
+  //   localStorage.setItem('contacts', JSON.stringify(contacts));
+  // }, [contacts]);
 
-  const addContact = newContact => {
+  const addOneContact = newContact => {
     const loweredNewContact = newContact.name.toLowerCase();
     const isContactExists = contacts.some(
       contact => contact.name.toLowerCase() === loweredNewContact
@@ -33,48 +35,45 @@ const App = () => {
       Notify.failure(`${newContact.name} is already in phonebook.`);
       return;
     }
-    setContacts(prevContacts => [...prevContacts, newContact]);
+    dispatch(addContact(newContact));
     Notify.success(`${newContact.name} added to phonebook successfully!`);
   };
 
-  const deleteContact = contactId => {
+  const deleteOneContact = contactId => {
     const contactName = contacts.find(contact => contact.id === contactId);
-    setContacts(prevContacts =>
-      prevContacts.filter(contact => contact.id !== contactId)
-    );
+    dispatch(deleteContact(contactId));
     Notify.warning(`${contactName.name} delete from phonebook.`);
   };
 
-  const sortContacts = unsortedContacts => {
-    const sortedContacts = unsortedContacts.sort(
-      (firstContact, secondContact) =>
+  const handleFilter = event => {
+    dispatch(filterContacts(event.currentTarget.value));
+  };
+
+  const filtredContacts = () => {
+    return contacts
+      .filter(contact =>
+        contact.name.toLowerCase().includes(filter.toLowerCase())
+      )
+      .sort((firstContact, secondContact) =>
         firstContact.name.localeCompare(secondContact.name)
-    );
-    return sortedContacts;
+      );
   };
 
   return (
     <Container>
       <h1 className="title main-title">Phonebook</h1>
-      <ContactForm onSubmit={addContact} />
+      <ContactForm onSubmit={addOneContact} />
       <h2 className="title sub-title">Contacts</h2>
       {contacts.length > 0 ? (
         <>
-          <SearchFilter contacts={contacts} onChange={handleFilter} />
-          {filtredContacts ? (
-            filtredContacts.length > 0 ? (
-              <ContactList
-                contacts={sortContacts(filtredContacts)}
-                onDelete={deleteContact}
-              />
-            ) : (
-              <Notification message="No matches found" />
-            )
-          ) : (
+          <SearchFilter filter={filter} onChange={handleFilter} />
+          {filtredContacts().length > 0 ? (
             <ContactList
-              contacts={sortContacts(contacts)}
-              onDelete={deleteContact}
+              contacts={filtredContacts()}
+              onDelete={deleteOneContact}
             />
+          ) : (
+            <Notification message="No matches found" />
           )}
         </>
       ) : (
