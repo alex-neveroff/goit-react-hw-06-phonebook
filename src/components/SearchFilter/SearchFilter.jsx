@@ -1,9 +1,9 @@
 import { SearchForm } from 'components/SearchFilter/SearchFilter.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { filterReducer } from 'redux/filterSlice';
+import { filterReducer } from 'redux/slice';
 
 const SearchFilter = () => {
-  const filter = useSelector(state => state.filter.filter);
+  const filter = useSelector(state => state.contacts.filter);
   const dispatch = useDispatch();
   const handleFilter = event => {
     dispatch(filterReducer(event.currentTarget.value));

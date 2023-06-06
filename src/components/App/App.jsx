@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addReducer, deleteReducer } from 'redux/contactSlice';
+import { addReducer, deleteReducer } from 'redux/slice';
 import { Container } from './App.styled';
 import { Notify } from 'notiflix';
 import ContactForm from 'components/ContactForm';
@@ -9,9 +9,11 @@ import SearchFilter from 'components/SearchFilter';
 import Notification from 'components/Notification';
 
 const App = () => {
-  const contacts = useSelector(state => state.contacts.contacts);
-  const filter = useSelector(state => state.filter.filter);
   const dispatch = useDispatch();
+  const contacts = useSelector(state => state.contacts.contacts);
+  const filteredContacts = useSelector(
+    state => state.contacts.filteredContacts
+  );
 
   // const [contacts, setContacts] = useState(
   //   JSON.parse(localStorage.getItem('contacts')) ?? []
@@ -44,16 +46,6 @@ const App = () => {
     Notify.warning(`${contactName.name} delete from phonebook.`);
   };
 
-  const filtredContacts = () => {
-    return contacts
-      .filter(contact =>
-        contact.name.toLowerCase().includes(filter.toLowerCase())
-      )
-      .sort((firstContact, secondContact) =>
-        firstContact.name.localeCompare(secondContact.name)
-      );
-  };
-
   return (
     <Container>
       <h1 className="title main-title">Phonebook</h1>
@@ -62,13 +54,17 @@ const App = () => {
       {contacts.length > 0 ? (
         <>
           <SearchFilter />
-          {filtredContacts().length > 0 ? (
-            <ContactList
-              contacts={filtredContacts()}
-              onDelete={deleteContact}
-            />
+          {filteredContacts ? (
+            filteredContacts.length > 0 ? (
+              <ContactList
+                contacts={filteredContacts}
+                onDelete={deleteContact}
+              />
+            ) : (
+              <Notification message="No matches found" />
+            )
           ) : (
-            <Notification message="No matches found" />
+            <ContactList contacts={contacts} onDelete={deleteContact} />
           )}
         </>
       ) : (
