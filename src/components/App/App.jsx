@@ -1,6 +1,6 @@
 import React from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { addReducer, deleteReducer } from 'redux/slice';
+import { addReducer, deleteReducer } from 'redux/phonebookSlice';
 import { Container } from './App.styled';
 import { Notify } from 'notiflix';
 import ContactForm from 'components/ContactForm';
@@ -14,18 +14,6 @@ const App = () => {
   const filteredContacts = useSelector(
     state => state.contacts.filteredContacts
   );
-
-  // const [contacts, setContacts] = useState(
-  //   JSON.parse(localStorage.getItem('contacts')) ?? []
-  // );
-
-  // useEffect(() => {
-  //   if (contacts.length === 0) {
-  //     localStorage.removeItem('contacts');
-  //     return;
-  //   }
-  //   localStorage.setItem('contacts', JSON.stringify(contacts));
-  // }, [contacts]);
 
   const addContact = newContact => {
     const loweredNewContact = newContact.name.toLowerCase();
