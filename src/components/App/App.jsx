@@ -11,9 +11,12 @@ import Notification from 'components/Notification';
 const App = () => {
   const dispatch = useDispatch();
   const contacts = useSelector(state => state.contacts.contacts);
-  const filteredContacts = useSelector(
-    state => state.contacts.filteredContacts
-  );
+  const filter = useSelector(state => state.contacts.filter);
+  const showContacts = contacts
+    .filter(contact => contact.name.toLowerCase().includes(filter))
+    .sort((firstContact, secondContact) =>
+      firstContact.name.localeCompare(secondContact.name)
+    );
 
   const addContact = newContact => {
     const loweredNewContact = newContact.name.toLowerCase();
@@ -42,17 +45,10 @@ const App = () => {
       {contacts.length > 0 ? (
         <>
           <SearchFilter />
-          {filteredContacts ? (
-            filteredContacts.length > 0 ? (
-              <ContactList
-                contacts={filteredContacts}
-                onDelete={deleteContact}
-              />
-            ) : (
-              <Notification message="No matches found" />
-            )
+          {showContacts.length > 0 ? (
+            <ContactList contacts={showContacts} onDelete={deleteContact} />
           ) : (
-            <ContactList contacts={contacts} onDelete={deleteContact} />
+            <Notification message="No matches found" />
           )}
         </>
       ) : (

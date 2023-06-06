@@ -8,6 +8,7 @@ const SearchFilter = () => {
   const handleFilter = event => {
     dispatch(filterReducer(event.currentTarget.value));
   };
+
   return (
     <SearchForm htmlFor="filter-field">
       Find contacts by name

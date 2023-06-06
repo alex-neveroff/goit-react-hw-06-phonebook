@@ -3,18 +3,12 @@ import { createSlice } from '@reduxjs/toolkit';
 export const phonebookSlice = createSlice({
   name: 'contacts',
   initialState: {
-    contacts: [].sort((firstContact, secondContact) =>
-      firstContact.name.localeCompare(secondContact.name)
-    ),
+    contacts: [],
     filter: '',
-    filteredContacts: null,
   },
   reducers: {
     addReducer(state, action) {
-      state.contacts = [...state.contacts, action.payload].sort(
-        (firstContact, secondContact) =>
-          firstContact.name.localeCompare(secondContact.name)
-      );
+      state.contacts.push(action.payload);
     },
     deleteReducer(state, action) {
       state.contacts = state.contacts.filter(contact => {
@@ -22,14 +16,7 @@ export const phonebookSlice = createSlice({
       });
     },
     filterReducer(state, action) {
-      state.filter = action.payload;
-      state.filteredContacts = state.contacts
-        .filter(contact =>
-          contact.name.toLowerCase().includes(state.filter.toLowerCase())
-        )
-        .sort((firstContact, secondContact) =>
-          firstContact.name.localeCompare(secondContact.name)
-        );
+      state.filter = action.payload.toLowerCase();
     },
   },
 });
